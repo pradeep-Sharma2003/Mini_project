@@ -13,7 +13,6 @@ from developer import Developer
 from help import Help
 from chatbot import ChatBot
 
-
 class Face_Recognition_System:
     def __init__(self,root):
         self.root=root
@@ -45,7 +44,7 @@ class Face_Recognition_System:
         f_lbl.place(x=1000,y=0,width=550,height=130)
 
         # bg image
-        img3=Image.open(r"collage_images\background.jpg")
+        img3=Image.open(r"collage_images\1.jpg")
         img3=img3.resize((1530,710),Image.ANTIALIAS)
         self.photoimg3=ImageTk.PhotoImage(img3)
 
