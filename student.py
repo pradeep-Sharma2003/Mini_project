@@ -4,6 +4,8 @@ from PIL import Image,ImageTk
 from tkinter import messagebox
 import mysql.connector
 import cv2
+from tkinter import filedialog
+import os
 
 
 class Student:
@@ -31,30 +33,36 @@ class Student:
 
         #fist image
         img=Image.open(r"E:\face_recognition System\collage_images\smart-attandance1.jpg")
-        img=img.resize((500,130),Image.ANTIALIAS)
+        img=img.resize((540,160),Image.ANTIALIAS)
         self.photoimg=ImageTk.PhotoImage(img)
 
-        f_lbl=Label(self.root,image=self.photoimg)
-        f_lbl.place(x=0,y=0,width=500,height=150)
+        self.btn_1=Button(self.root,command=self.open_img,image=self.photoimg,cursor="hand2")
+        self.btn_1.place(x=0,y=0,width=540,height=160)
+        # f_lbl=Label(self.root,image=self.photoimg)
+        # f_lbl.place(x=0,y=0,width=500,height=150)
    
         #second image
-        img1=Image.open(r"E:\face_recognition System\collage_images\smart-face.jpg")
-        img1=img1.resize((500,130),Image.ANTIALIAS)
-        self.photoimg1=ImageTk.PhotoImage(img1)
+        img_2=Image.open(r"E:\face_recognition System\collage_images\smart-face.jpg")
+        img_2=img_2.resize((540,160),Image.ANTIALIAS)
+        self.photoimg_2=ImageTk.PhotoImage(img_2)
 
-        f_lbl=Label(self.root,image=self.photoimg1)
-        f_lbl.place(x=500,y=0,width=500,height=150)
+        self.btn_2=Button(self.root,command=self.open_img_2,image=self.photoimg_2,cursor="hand2")
+        self.btn_2.place(x=540,y=0,width=540,height=160)
+        # f_lbl=Label(self.root,image=self.photoimg1)
+        # f_lbl.place(x=500,y=0,width=540,height=160)
 
         #third image
-        img2=Image.open(r"E:\face_recognition System\collage_images\smart-attandance.jpg")
-        img2=img2.resize((550,130),Image.ANTIALIAS)
-        self.photoimg2=ImageTk.PhotoImage(img2)
+        img_3=Image.open(r"E:\face_recognition System\collage_images\smart-attandance.jpg")
+        img_3=img_3.resize((540,160),Image.ANTIALIAS)
+        self.photoimg_3=ImageTk.PhotoImage(img_3)
 
-        f_lbl=Label(self.root,image=self.photoimg2)
-        f_lbl.place(x=1000,y=0,width=550,height=150)
+        self.btn_3=Button(self.root,command=self.open_img_3,image=self.photoimg_3,cursor="hand2")
+        self.btn_3.place(x=1000,y=0,width=540,height=160)
+        # f_lbl=Label(self.root,image=self.photoimg2)
+        # f_lbl.place(x=1000,y=0,width=550,height=150)
 
         # bg image
-        img3=Image.open(r"E:\face_recognition System\collage_images\background.jpg")
+        img3=Image.open(r"collage_images\1.jpg")
         img3=img3.resize((1530,710),Image.ANTIALIAS)
         self.photoimg3=ImageTk.PhotoImage(img3)
 
@@ -79,7 +87,7 @@ class Student:
         f_lbl.place(x=5,y=0,width=720,height=150)
 
         #current course information
-        current_course_frame=LabelFrame(Left_frame,bd=2,bg="white",relief=RIDGE,text="Current course information",font=("times new roman",13,"bold"))
+        current_course_frame=LabelFrame(Left_frame,bd=2,bg="white",relief=RIDGE,text="Current course information",font=("times new roman",13,"bold"),fg="red")
         current_course_frame.place(x=5,y=135,width=720,height=115)
 
         # Department
@@ -119,7 +127,7 @@ class Student:
         semester_combo.grid(row=1,column=3,padx=2,pady=10,sticky=W)
 
         #Class student information
-        class_student_frame=LabelFrame(Left_frame,bd=2,bg="white",relief=RIDGE,text="Class Student information",font=("times new roman",13,"bold"))
+        class_student_frame=LabelFrame(Left_frame,bd=2,bg="white",relief=RIDGE,text="Class Student information",font=("times new roman",13,"bold"),fg="red")
         class_student_frame.place(x=5,y=250,width=720,height=300)
         
         #student id field
@@ -247,18 +255,21 @@ class Student:
         search_label=Label(search_frame,text="Search By:",font=("times new roman",15,"bold"),bg="red",fg="white")
         search_label.grid(row=0,column=0,padx=10,pady=5,sticky=W)
 
-        search_combo=ttk.Combobox(search_frame,font=("times new roman",13,"bold"),state="readonly",width=15)
-        search_combo["values"]=("Select","Roll_No","Phone_No")
+        #search
+        self.var_com_search=StringVar()
+        search_combo=ttk.Combobox(search_frame,textvariable=self.var_com_search,font=("times new roman",13,"bold"),state="readonly",width=15)
+        search_combo["values"]=("Select","Roll","Phone","student_id")
         search_combo.current(0)
         search_combo.grid(row=0,column=1,padx=2,pady=10,sticky=W)
 
-        search_entry=ttk.Entry(search_frame,width=15,font=("times new roman",13,"bold"))
+        self.var_search=StringVar()
+        search_entry=ttk.Entry(search_frame,textvariable=self.var_search,width=15,font=("times new roman",13,"bold"))
         search_entry.grid(row=0,column=2,padx=10,pady=5,sticky=W)
 
-        search_btn=Button(search_frame,text="Search",width=12,font=("times new roman",12,"bold"),bg="blue",fg="white")
+        search_btn=Button(search_frame,command=self.search_data,text="Search",width=12,font=("times new roman",12,"bold"),bg="blue",fg="white")
         search_btn.grid(row=0,column=3,padx=4)
 
-        showAll_btn=Button(search_frame,text="Show All",width=12,font=("times new roman",12,"bold"),bg="blue",fg="white")
+        showAll_btn=Button(search_frame,command=self.fetch_data,text="Show All",width=12,font=("times new roman",12,"bold"),bg="blue",fg="white")
         showAll_btn.grid(row=0,column=4,padx=4)
 
 
@@ -467,6 +478,26 @@ class Student:
         self.var_teacher.set("")
         self.var_radio1.set("")
 
+    #search Data
+    def search_data(self):
+        if self.var_com_search.get()=="" or self.var_search.get()=="":
+            messagebox.showerror("Error","Please select option")
+        else:
+            try:
+                conn=mysql.connector.connect(host="localhost",username="root",password="123456",database="face_recognizer")
+                my_cursor=conn.cursor()
+                my_cursor.execute("select * from student where " +str(self.var_com_search.get())+" LIKE '%"+str(self.var_search.get())+"%'")
+                data=my_cursor.fetchall()
+                if len(data)!=0:
+                    self.student_table.delete(*self.student_table.get_children())
+                    for i in data:
+                        self.student_table.insert("",END,values=i)
+                    conn.commit()
+                conn.close()
+            except Exception as es:
+                messagebox.showerror("Error",f"Due To:{str(es)}",parent=self.root)
+
+
     #==================================================== Genarate data set take photo sample ====================================
     def generate_dataset(self):
         if self.var_dep.get()=="Select Department" or self.var_std_name.get()=="" or self.var_std_id.get()=="":
@@ -537,6 +568,33 @@ class Student:
                 messagebox.showinfo("Result","Generating data set completed!!!")
             except Exception as es:
                 messagebox.showerror("Error",f"Due To:{str(es)}",parent=self.root)
+
+
+    # Open image
+    def open_img(self):
+        fln=filedialog.askopenfilename(initialdir=os.getcwd(),title="Open Images",filetypes=(("JPG File","*.jpg"),("PNG File","*.png"),("All Files","*.*")))
+        img=Image.open(fln)
+        img_browse=img.resize((540,160),Image.ANTIALIAS)
+        self.photoimg_browse=ImageTk.PhotoImage(img_browse)
+        self.btn_1.config(image=self.photoimg_browse)
+
+    # Open image
+    def open_img_2(self):
+        fln=filedialog.askopenfilename(initialdir=os.getcwd(),title="Open Images",filetypes=(("JPG File","*.jpg"),("PNG File","*.png"),("All Files","*.*")))
+        img_2=Image.open(fln)
+        img_browse_2=img_2.resize((540,160),Image.ANTIALIAS)
+        self.photoimg_browse_2=ImageTk.PhotoImage(img_browse_2)
+        self.btn_2.config(image=self.photoimg_browse_2)
+
+    # Open image
+    def open_img_3(self):
+        fln=filedialog.askopenfilename(initialdir=os.getcwd(),title="Open Images",filetypes=(("JPG File","*.jpg"),("PNG File","*.png"),("All Files","*.*")))
+        img_3=Image.open(fln)
+        img_browse_3=img_3.resize((540,160),Image.ANTIALIAS)
+        self.photoimg_browse_3=ImageTk.PhotoImage(img_browse_3)
+        self.btn_3.config(image=self.photoimg_browse_3)
+
+
 
 
 
